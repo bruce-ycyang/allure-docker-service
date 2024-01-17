@@ -946,9 +946,9 @@ def send_results_endpoint(): #pylint: disable=too-many-branches
     return resp
 
 @app.route("/generate-report", strict_slashes=False)
-@app.route("/allure-docker-service/generate-report", strict_slashes=False)
+@app.route("/allure-docker-service/generate-report/<results_timestamp>", strict_slashes=False)
 @jwt_required
-def generate_report_endpoint():
+def generate_report_endpoint(results_timestamp):
     try:
         if check_admin_access(current_user) is False:
             return jsonify({ 'meta_data': { 'message': 'Access Forbidden' } }), 403
@@ -991,7 +991,7 @@ def generate_report_endpoint():
         call([KEEP_HISTORY_PROCESS, project_id, ORIGIN])
         response = subprocess.Popen([
             GENERATE_REPORT_PROCESS, exec_store_results_process,
-            project_id, ORIGIN, execution_name, execution_from, execution_type],
+            project_id, ORIGIN, execution_name, execution_from, execution_type, results_timestamp],
                                     stdout=subprocess.PIPE).communicate()[0]
         call([RENDER_EMAIL_REPORT_PROCESS, project_id, ORIGIN])
 
@@ -1080,9 +1080,9 @@ def clean_history_endpoint():
     return resp
 
 @app.route("/clean-results", strict_slashes=False)
-@app.route("/allure-docker-service/clean-results", strict_slashes=False)
+@app.route("/allure-docker-service/clean-results/<results_timestamp>", strict_slashes=False)
 @jwt_required
-def clean_results_endpoint():
+def clean_results_endpoint(results_timestamp):
     try:
         if check_admin_access(current_user) is False:
             return jsonify({ 'meta_data': { 'message': 'Access Forbidden' } }), 403
@@ -1101,7 +1101,7 @@ def clean_results_endpoint():
         check_process(GENERATE_REPORT_PROCESS, project_id)
         check_process(CLEAN_RESULTS_PROCESS, project_id)
 
-        call([CLEAN_RESULTS_PROCESS, project_id, ORIGIN])
+        call([CLEAN_RESULTS_PROCESS, project_id, ORIGIN, results_timestamp])
     except Exception as ex:
         body = {
             'meta_data': {
