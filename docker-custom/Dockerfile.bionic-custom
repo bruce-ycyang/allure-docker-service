@@ -116,7 +116,7 @@ VOLUME [ "$RESULTS_DIRECTORY" ]
 ENV DEPRECATED_PORT=4040
 ENV PORT=5050
 
-EXPOSE $DEPRECATED_PORT
+#EXPOSE $DEPRECATED_PORT
 EXPOSE $PORT
 
 HEALTHCHECK --interval=10s --timeout=60s --retries=3 \
@@ -124,4 +124,5 @@ HEALTHCHECK --interval=10s --timeout=60s --retries=3 \
 
 USER allure
 
-CMD $ROOT/runAllureDeprecated.sh & $ROOT/runAllureApp.sh & $ROOT/checkAllureResultsFiles.sh
+CMD $ROOT/runAllureApp.sh 
+#CMD $ROOT/runAllureDeprecated.sh & $ROOT/runAllureApp.sh & $ROOT/checkAllureResultsFiles.sh
